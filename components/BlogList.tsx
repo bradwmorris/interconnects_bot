@@ -11,10 +11,14 @@ interface BlogMetadata {
   url?: string;
 }
 
-export default function BlogList() {
+interface BlogListProps {
+  selectedBlog: string | null;
+  onBlogSelect: (title: string | null) => void;
+}
+
+export default function BlogList({ selectedBlog, onBlogSelect }: BlogListProps) {
   const [blogs, setBlogs] = useState<BlogMetadata[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedBlog, setSelectedBlog] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBlogs();
@@ -87,7 +91,7 @@ export default function BlogList() {
             {blogs.map((blog, index) => (
               <button
                 key={index}
-                onClick={() => setSelectedBlog(blog.title)}
+                onClick={() => onBlogSelect(selectedBlog === blog.title ? null : blog.title)}
                 style={{
                   width: '100%',
                   padding: '10px 20px',

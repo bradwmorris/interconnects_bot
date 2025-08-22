@@ -105,6 +105,68 @@ class BlogProcessor:
         
         return metadata, content
     
+    def extract_gist_and_themes(self, content: str, title: str = "") -> Dict:
+        """Use GPT-4o to extract gist and themes from article content."""
+        try:
+            logger.info("Extracting gist and themes using GPT-4o")
+            
+            prompt = f"""Please analyze the following article and extract:
+
+1. A concise gist (1-2 sentences) summarizing the main argument or point
+2. 3-7 major themes as an array of strings
+
+Article Title: {title}
+
+Article Content:
+{content[:8000]}  # Limit content to stay within token limits
+
+Please respond in valid JSON format:
+{{
+  "gist": "Your 1-2 sentence summary here",
+  "themes": ["Theme 1", "Theme 2", "Theme 3"]
+}}"""
+
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are an expert at analyzing AI research and technical content. Extract key information in the requested JSON format."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.3
+            )
+            
+            result_text = response.choices[0].message.content
+            logger.info(f"GPT-4o raw response: {result_text}")
+            
+            # Parse JSON response
+            import json
+            # Clean the response to extract JSON
+            if "```json" in result_text:
+                # Extract JSON from code block
+                json_start = result_text.find("```json") + 7
+                json_end = result_text.find("```", json_start)
+                result_text = result_text[json_start:json_end].strip()
+            elif "{" in result_text and "}" in result_text:
+                # Extract JSON from response
+                json_start = result_text.find("{")
+                json_end = result_text.rfind("}") + 1
+                result_text = result_text[json_start:json_end]
+            
+            result = json.loads(result_text)
+            
+            logger.info(f"Extracted gist: {result.get('gist', '')[:100]}...")
+            logger.info(f"Extracted themes: {result.get('themes', [])}")
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error extracting gist and themes: {e}")
+            # Return empty values if GPT-4o call fails
+            return {
+                "gist": "",
+                "themes": []
+            }
+
     def create_chunks(self, content: str, metadata: Dict) -> List[Dict]:
         """Create semantic chunks from content."""
         chunks = []
@@ -222,7 +284,15 @@ class BlogProcessor:
             if 'title' not in metadata:
                 metadata['title'] = file_name.replace('_', ' ').replace('-', ' ').title()
             
-            logger.info(f"Metadata: {metadata}")
+            logger.info(f"Initial metadata: {metadata}")
+            
+            # Extract gist and themes using GPT-4o
+            gist_themes = self.extract_gist_and_themes(main_content, metadata.get('title', ''))
+            
+            # Add gist and themes to metadata
+            metadata.update(gist_themes)
+            
+            logger.info(f"Enhanced metadata with gist and themes: {metadata}")
             
             # Create chunks
             chunks = self.create_chunks(main_content, metadata)
