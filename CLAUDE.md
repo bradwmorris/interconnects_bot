@@ -63,15 +63,25 @@ npm install
 cd scripts && source venv/bin/activate && python ingest_blogs.py
 ```
 
-## Branch-Based Development
+## Collaborative Development Workflow
 
-**Branch Naming**: `claude-session-YYYYMMDD-HHMMSS`
+**Branch Naming**: Feature-based (2025 standard)
+- `feature/add-authentication` - New features
+- `fix/search-timeout` - Bug fixes  
+- `improvement/performance` - Enhancements
+- `docs/update-guides` - Documentation
+
+**Documentation Structure**:
+- Session logs: `/docs/YYYY_MM_DD/sessions/`
+- Specifications: `/docs/YYYY_MM_DD/specs/`
+- Design docs: `/docs/YYYY_MM_DD/design/`
+- Archive: `/docs/archive/` (historical docs)
 
 **Workflow**:
-1. Each Claude session works on timestamped branch
-2. Document work in `/branch/[branch-name].md` 
-3. Update status as tasks complete
-4. Move completed docs to `/branch/completed/`
+1. Create descriptive feature branch
+2. Document session work in `/docs/YYYY_MM_DD/sessions/`
+3. Update status and commit with clear messages
+4. Create PR with proper description for team review
 
 ## Critical Implementation Details
 

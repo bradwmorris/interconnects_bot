@@ -49,12 +49,17 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual environments
+# Virtual environments (including scripts/venv)
 venv/
 env/
 ENV/
 .venv/
 .ENV/
+scripts/venv/
+
+# Blog processing artifacts
+blogs/*_cleaned.md
+*_cleaned.md
 
 # IDEs
 .vscode/

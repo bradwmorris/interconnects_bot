@@ -2,14 +2,16 @@
 
 A minimal tool to embed and query Interconnects AI blog content using vector search and GPT-4o-mini.
 
+> **🤖 AI-Assisted Development**: This project is actively developed with Claude AI assistance. See [CONTRIBUTING.md](CONTRIBUTING.md) for workflow details.
+
 ## Setup
 
 ### 1. Environment Variables
 
-Copy `.env.local.example` to `.env.local` and fill in your credentials:
+Copy `.env.example` to `.env.local` and fill in your credentials:
 
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 Required variables:
@@ -37,16 +39,16 @@ CREATE INDEX ON interconnects_bot USING ivfflat (embedding vector_cosine_ops);
 
 ### 3. Install Dependencies
 
-#### Python (for ingestion script)
 ```bash
-cd scripts
-pip install -r requirements.txt
-```
-
-#### Next.js (for the UI)
-```bash
-cd app
+# Install Node.js dependencies (from project root)
 npm install
+
+# Set up Python environment for content ingestion
+cd scripts
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cd ..
 ```
 
 ## Usage
@@ -83,7 +85,7 @@ python scripts/ingest_blogs.py --folder blogs/
 ### Step 3: Start the UI
 
 ```bash
-cd app
+# From project root
 npm run dev
 ```
 
@@ -93,22 +95,33 @@ Open http://localhost:3000 to use the chat interface.
 
 ```
 interconnects_bot/
-├── scripts/
-│   ├── ingest_blogs.py     # Processes markdown files
-│   └── requirements.txt    # Python dependencies
-├── blogs/                   # Markdown blog files
-├── app/                     # Next.js application
-│   ├── components/
-│   │   ├── BlogList.tsx    # Left panel blog list
-│   │   └── ChatInterface.tsx # Right panel chat
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── chat/       # Chat endpoint
-│   │   │   └── search/     # Vector search endpoint
-│   │   └── page.tsx        # Main page
-│   └── lib/
-│       └── supabase.ts     # Supabase client
-└── .env.local              # Environment variables
+├── CLAUDE.md               # AI assistant configuration
+├── CONTRIBUTING.md         # Contribution guidelines
+├── README.md              # This file
+├── app/                   # Next.js 15 App Router
+│   ├── api/
+│   │   ├── chat/         # Chat API with streaming
+│   │   └── search/       # Vector search endpoint
+│   ├── globals.css       # Global styles
+│   ├── layout.tsx        # Root layout
+│   └── page.tsx          # Main application page
+├── components/            # React components
+│   ├── BlogList.tsx      # Left sidebar blog list
+│   └── ChatInterface.tsx # Main chat interface
+├── docs/                 # Project documentation
+│   ├── YYYY_MM_DD/       # Date-based organization
+│   ├── archive/          # Historical documentation
+│   ├── contributing/     # Contributor guides
+│   └── deployment/       # Deployment guides
+├── lib/
+│   └── supabase.ts       # Supabase client configuration
+├── scripts/              # Content ingestion tools
+│   ├── ingest_blogs.py   # Python content processor
+│   ├── requirements.txt  # Python dependencies
+│   └── venv/            # Python virtual environment
+├── blogs/               # Blog content (markdown files)
+├── .env.local          # Environment variables (not in git)
+└── .env.example        # Environment template
 ```
 
 ## Features
@@ -162,6 +175,33 @@ Make sure you've:
 1. Added markdown files to the `blogs/` folder
 2. Run the ingestion script successfully
 3. Check Supabase to verify data was inserted
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- **Development setup** and workflow
+- **Branch naming conventions** and collaboration process  
+- **AI-assisted development** patterns with Claude
+- **Code style** and testing guidelines
+- **Pull request** process
+
+### Quick Contributing Guide
+
+1. **Fork and clone** the repository
+2. **Create a feature branch**: `git checkout -b feature/your-feature-name`
+3. **Make your changes** with clear, atomic commits
+4. **Test thoroughly** - ensure chat and search work as expected
+5. **Submit a PR** with clear description
+
+### Development Commands
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server  
+npm run lint     # Run ESLint
+```
 
 ## License
 
