@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: #000000;
+  color: #ededed;
+  font-family: 'SF Mono', Menlo, Monaco, Consolas, monospace;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Focus styles */
+*:focus {
+  outline: none;
+}
+
+/* Input placeholder */
+::placeholder {
+  color: #555;
+  opacity: 1;
+}
+
+/* Critical override to prevent text from being flush against borders */
+[class*="flex"] > * {
+  min-width: 0;
+}
